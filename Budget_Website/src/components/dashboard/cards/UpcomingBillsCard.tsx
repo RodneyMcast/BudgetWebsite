@@ -1,29 +1,36 @@
 import React from "react"
-
-const sampleBills = [
-  { label: "Rent", amount: 1200, dueIn: "Due in 3 days" },
-  { label: "Phone bill", amount: 65, dueIn: "Due in 7 days" },
-  { label: "Electricity", amount: 85, dueIn: "Due in 12 days" },
-]
+import { useBudget } from "../../../budget/BudgetProvider"
+import { formatCurrencyRounded } from "../../../utils/currency"
+import { formatDueIn, formatLongDate } from "../../../utils/date"
+import Badge from "../../ui/Badge"
+import Card from "../../ui/Card"
+import CardHeader from "../../ui/CardHeader"
 
 export default function UpcomingBillsCard() {
+  const { state, removeBill } = useBudget()
+
   return (
-    <section className="card">
-      <div className="card-header">
-        <p className="eyebrow">Upcoming</p>
-        <h3>Bill reminders</h3>
-      </div>
+    <Card>
+      <CardHeader eyebrow="Upcoming" title="Bill reminders" description="Scheduled and recurring payments." />
       <div className="stack gap-xs">
-        {sampleBills.map((bill) => (
-          <div key={bill.label} className="list-row">
-            <div>
+        {state.bills.length === 0 && <p className="muted">No upcoming bills yet.</p>}
+        {state.bills.map((bill) => (
+          <div key={bill.id} className="list-row">
+            <div className="list-main">
               <p className="label">{bill.label}</p>
-              <p className="muted">{bill.dueIn}</p>
+              <p className="muted">
+                {formatDueIn(bill.dueDate)} - {formatLongDate(bill.dueDate)}
+              </p>
             </div>
-            <p className="value">${bill.amount.toFixed(2)}</p>
+            <div className="list-actions">
+              <Badge tone="warm">{formatCurrencyRounded(bill.amount)}</Badge>
+              <button type="button" className="ghost" onClick={() => removeBill(bill.id)}>
+                Remove
+              </button>
+            </div>
           </div>
         ))}
       </div>
-    </section>
+    </Card>
   )
 }

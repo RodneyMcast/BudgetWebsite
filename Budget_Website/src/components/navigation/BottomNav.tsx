@@ -3,8 +3,8 @@ import type { AppTab } from "../../App"
 
 const tabs: { id: AppTab; label: string; helper: string }[] = [
   { id: "dashboard", label: "Dashboard", helper: "Overview" },
-  { id: "add", label: "Add", helper: "New entry" },
-  { id: "history", label: "History", helper: "Full log" },
+  { id: "add", label: "Add", helper: "New payment" },
+  { id: "history", label: "History", helper: "All payments" },
 ]
 
 interface BottomNavProps {
@@ -22,7 +22,8 @@ export default function BottomNav({ active, onChange }: BottomNavProps) {
           onClick={() => onChange(tab.id)}
           type="button"
         >
-          <span>{tab.label}</span>
+          <span className="nav-icon" data-icon={tab.id} aria-hidden="true" />
+          <span className="nav-label">{tab.label}</span>
           <small>{tab.helper}</small>
         </button>
       ))}

@@ -1,37 +1,45 @@
-import React from "react"
+import React, { useMemo, useState } from "react"
 import { useBudget } from "../../budget/BudgetProvider"
+import Card from "../ui/Card"
+import CardHeader from "../ui/CardHeader"
+import TransactionEditor from "./TransactionEditor"
+import TransactionRow from "./TransactionRow"
 
 export default function TransactionHistory() {
   const { state, deleteTransaction } = useBudget()
+  const [editingId, setEditingId] = useState<string | null>(null)
+
+  const editingTransaction = useMemo(
+    () => state.transactions.find((tx) => tx.id === editingId) || null,
+    [editingId, state.transactions],
+  )
 
   return (
-    <section className="card">
-      <div className="card-header">
-        <div>
-          <p className="eyebrow">History</p>
-          <h3>All transactions</h3>
+    <div className="stack gap-md">
+      {editingTransaction && (
+        <TransactionEditor transaction={editingTransaction} onCancel={() => setEditingId(null)} />
+      )}
+      <Card>
+        <CardHeader
+          eyebrow="History"
+          title="All payments"
+          description="Edit, remove, or review each entry as you iterate."
+        />
+        <div className="stack gap-xs">
+          {state.transactions.length === 0 && <p className="muted">No payments yet.</p>}
+          {state.transactions.map((tx) => (
+            <TransactionRow
+              key={tx.id}
+              transaction={tx}
+              datePlacement="body"
+              actions={[
+                { label: "Edit", onClick: () => setEditingId(tx.id) },
+                { label: "Remove", onClick: () => deleteTransaction(tx.id), tone: "danger" },
+              ]}
+            />
+          ))}
         </div>
-        <p className="muted">Browse the sample data set or remove items as you explore flows.</p>
-      </div>
-
-      <div className="stack gap-xs">
-        {state.transactions.length === 0 && <p className="muted">No transactions yet.</p>}
-        {state.transactions.map((tx) => (
-          <div key={tx.id} className="list-row">
-            <div>
-              <p className="label">{tx.category}</p>
-              <p className="muted">{tx.description || "No description provided"}</p>
-              <p className="muted">{tx.date}</p>
-            </div>
-            <div className="pill-row">
-              <span className={`pill ${tx.type === "income" ? "pill-positive" : "pill-negative"}`}>
-                {tx.type === "income" ? "+" : "-"}${tx.amount.toFixed(2)}
-              </span>
-              <button onClick={() => deleteTransaction(tx.id)}>Remove</button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
+      </Card>
+    </div>
   )
 }
