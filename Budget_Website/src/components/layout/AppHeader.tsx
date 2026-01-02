@@ -3,7 +3,6 @@ import { useBudget } from "../../budget/BudgetProvider"
 import type { AppTab } from "../../App"
 import { formatCurrency, formatCurrencyRounded } from "../../utils/currency"
 import { formatLongDate, formatMonthYear } from "../../utils/date"
-import Badge from "../ui/Badge"
 import Card from "../ui/Card"
 import StatTile from "../ui/StatTile"
 import AppTopBar from "./AppTopBar"
@@ -21,12 +20,6 @@ const sectionLinks = [
   { id: "planning", label: "Planning" },
   { id: "activity", label: "Activity" },
 ]
-
-const metaTags = [
-  { label: "Mobile-first", tone: "accent" },
-  { label: "Creative computing", tone: "cool" },
-  { label: "Prototype", tone: "warm" },
-] as const
 
 export default function AppHeader({ activeTab, onTabChange, onQuickAction }: AppHeaderProps) {
   const { totals, state } = useBudget()
@@ -61,13 +54,6 @@ export default function AppHeader({ activeTab, onTabChange, onQuickAction }: App
             <h1>Budget workspace</h1>
           </div>
           <div className="avatar-chip">RB</div>
-        </div>
-        <div className="badge-group header-tags">
-          {metaTags.map((tag) => (
-            <Badge key={tag.label} tone={tag.tone}>
-              {tag.label}
-            </Badge>
-          ))}
         </div>
         <div className="header-balance">
           <p className="muted">Total balance</p>
